@@ -1,14 +1,15 @@
-import { Funnel, Search, SlidersHorizontal } from 'lucide-react'
-
 function FilterSelect({ label, value, onChange, options }) {
   return (
-    <label className="flex min-w-[150px] flex-1 flex-col gap-2 text-sm text-app-secondary">
-      {label}
-      <select value={value} onChange={(event) => onChange(event.target.value)} className="input-shell">
+    <label style={{ display: 'flex', flexDirection: 'column', gap: '2px', fontSize: '11px', color: '#000' }}>
+      {label}:
+      <select
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        className="win-select"
+        style={{ minWidth: '120px' }}
+      >
         {options.map((option) => (
-          <option key={option} value={option} className="bg-slate-900 text-white dark:bg-slate-900 dark:text-white">
-            {option}
-          </option>
+          <option key={option} value={option}>{option}</option>
         ))}
       </select>
     </label>
@@ -29,44 +30,71 @@ function TransactionFilters({
   categories,
 }) {
   return (
-    <div className="glass-panel p-4 sm:p-5">
-      <div className="flex flex-col gap-4">
-        <div className="flex items-center gap-2 text-sm font-medium text-app-primary">
-          <Funnel className="h-4 w-4 text-accent" />
-          Search, filter, and sort transactions
+    <div className="win-window" style={{ padding: 0 }}>
+      {/* Toolbar header */}
+      <div
+        style={{
+          background: 'linear-gradient(to right, #d4d0c8, #e8e4dc)',
+          borderBottom: '1px solid #808080',
+          padding: '3px 6px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '4px',
+        }}
+      >
+        <span style={{ fontSize: '11px', fontWeight: 'bold' }}>Find:</span>
+        <div className="win-inset" style={{ flex: 1, maxWidth: '280px', display: 'flex', alignItems: 'center', padding: '1px 4px', gap: '4px' }}>
+          <span style={{ fontSize: '10px', color: '#808080' }}>&#128269;</span>
+          <input
+            value={search}
+            onChange={(event) => onSearchChange(event.target.value)}
+            placeholder="Search description, category, or type..."
+            className="win-input"
+            style={{ border: 'none', flex: 1, padding: '1px 2px', background: 'transparent', outline: 'none', fontSize: '11px' }}
+          />
         </div>
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-[1.2fr_repeat(4,minmax(0,1fr))]">
-          <label className="flex flex-col gap-2 text-sm text-app-secondary md:col-span-2 xl:col-span-1">
-            Search
-            <div className="filter-shell flex items-center gap-3">
-              <Search className="h-4 w-4 text-app-muted" />
-              <input
-                value={search}
-                onChange={(event) => onSearchChange(event.target.value)}
-                placeholder="Search by description, category, or type"
-                className="w-full bg-transparent text-sm text-app-primary outline-none placeholder:text-app-muted"
-              />
-            </div>
-          </label>
+      </div>
 
-          <FilterSelect label="Category" value={selectedCategory} onChange={onCategoryChange} options={['All', ...categories]} />
-          <FilterSelect label="Type" value={selectedType} onChange={onTypeChange} options={['All', 'income', 'expense']} />
-          <FilterSelect label="Sort by" value={sortKey} onChange={onSortKeyChange} options={['date', 'amount', 'category', 'type']} />
-          <label className="flex min-w-[150px] flex-1 flex-col gap-2 text-sm text-app-secondary">
-            Direction
-            <button
-              type="button"
-              onClick={onSortDirectionChange}
-              className="filter-shell inline-flex h-[50px] items-center justify-between text-sm text-app-primary hover:bg-app-strong"
-            >
-              <span className="inline-flex items-center gap-2">
-                <SlidersHorizontal className="h-4 w-4 text-accent" />
-                {sortDirection === 'asc' ? 'Ascending' : 'Descending'}
-              </span>
-              <span className="text-xs uppercase tracking-[0.2em] text-app-muted">Toggle</span>
-            </button>
-          </label>
-        </div>
+      {/* Filter toolbar */}
+      <div
+        style={{
+          padding: '4px 8px',
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '8px',
+          alignItems: 'flex-end',
+          borderBottom: '1px solid #bbb',
+        }}
+      >
+        <FilterSelect
+          label="Category"
+          value={selectedCategory}
+          onChange={onCategoryChange}
+          options={['All', ...categories]}
+        />
+        <FilterSelect
+          label="Type"
+          value={selectedType}
+          onChange={onTypeChange}
+          options={['All', 'income', 'expense']}
+        />
+        <FilterSelect
+          label="Sort By"
+          value={sortKey}
+          onChange={onSortKeyChange}
+          options={['date', 'amount', 'category', 'type']}
+        />
+        <label style={{ display: 'flex', flexDirection: 'column', gap: '2px', fontSize: '11px', color: '#000' }}>
+          Order:
+          <button
+            type="button"
+            onClick={onSortDirectionChange}
+            className="win-button"
+            style={{ minWidth: '100px' }}
+          >
+            {sortDirection === 'asc' ? '&#8593; Ascending' : '&#8595; Descending'}
+          </button>
+        </label>
       </div>
     </div>
   )

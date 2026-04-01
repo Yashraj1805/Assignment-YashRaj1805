@@ -24,7 +24,8 @@ export default {
           'radial-gradient(circle at top left, rgba(20, 184, 166, 0.18), transparent 28%), radial-gradient(circle at top right, rgba(96, 165, 250, 0.16), transparent 24%), linear-gradient(180deg, rgba(12, 23, 41, 0.96), rgba(5, 11, 22, 1))',
       },
       fontFamily: {
-        sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+        sans: ['Tahoma', 'Arial', '"Microsoft Sans Serif"', 'sans-serif'],
+        mono: ['"Courier New"', 'Courier', 'monospace'],
       },
       keyframes: {
         float: {

@@ -1,24 +1,32 @@
-import { PencilLine, Plus } from 'lucide-react'
 import { formatCurrency, formatDate } from '../utils/formatters'
 
 function EmptyState({ isAdmin, onAddTransaction }) {
   return (
-    <div className="glass-panel flex flex-col items-center justify-center border border-dashed border-app bg-app-soft px-6 py-14 text-center">
-      <h3 className="text-xl font-semibold text-app-primary">No transactions match these filters</h3>
-      <p className="mt-3 max-w-md text-sm leading-6 text-app-secondary">
-        Try adjusting your search or filters to broaden the result set.
-        {isAdmin ? ' You can also add a new transaction to populate the dashboard.' : ''}
-      </p>
-      {isAdmin ? (
-        <button
-          type="button"
-          onClick={onAddTransaction}
-          className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-slate-950 px-4 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 dark:bg-white dark:text-slate-950"
+    <div className="win-window" style={{ padding: '24px', textAlign: 'center' }}>
+      <div style={{ marginBottom: '12px' }}>
+        <div
+          style={{
+            width: '48px', height: '48px', margin: '0 auto 8px',
+            background: '#d4d0c8',
+            borderTop: '2px solid #fff', borderLeft: '2px solid #fff',
+            borderRight: '2px solid #404040', borderBottom: '2px solid #404040',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: '24px',
+          }}
         >
-          <Plus className="h-4 w-4" />
-          Add transaction
+          &#128202;
+        </div>
+        <p style={{ fontSize: '12px', fontWeight: 'bold', margin: '0 0 4px' }}>No transactions match these filters</p>
+        <p style={{ fontSize: '11px', color: '#444', margin: 0 }}>
+          Try adjusting your search or filters to broaden the result set.
+          {isAdmin ? ' You can also add a new transaction to populate the dashboard.' : ''}
+        </p>
+      </div>
+      {isAdmin && (
+        <button type="button" onClick={onAddTransaction} className="win-button">
+          + Add Transaction
         </button>
-      ) : null}
+      )}
     </div>
   )
 }
@@ -31,92 +39,124 @@ function TransactionTable({ transactions, selectedRole, onAddTransaction, onEdit
   }
 
   return (
-    <div className="panel-grid overflow-hidden">
-      <div className="flex flex-col gap-3 border-b border-app px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-        <div>
-          <h3 className="text-lg font-semibold text-app-primary">Transactions</h3>
-          <p className="mt-1 text-sm text-app-secondary">
-            {transactions.length} records shown. Viewer can inspect; admin can add and edit.
-          </p>
-        </div>
-        {isAdmin ? (
-          <button
-            type="button"
-            onClick={onAddTransaction}
-            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-accent to-sky-400 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:-translate-y-0.5 hover:shadow-lg hover:shadow-accent/20"
+    <div className="win-window" style={{ padding: 0 }}>
+      {/* Table header toolbar */}
+      <div
+        style={{
+          padding: '3px 6px',
+          background: 'linear-gradient(to right, #d4d0c8, #e8e4dc)',
+          borderBottom: '1px solid #808080',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '8px',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '11px', fontWeight: 'bold' }}>Transactions</span>
+          <span
+            className="win-inset"
+            style={{ fontSize: '10px', padding: '1px 6px', display: 'inline-block' }}
           >
-            <Plus className="h-4 w-4" />
-            Add transaction
+            {transactions.length} records
+          </span>
+          {isAdmin ? (
+            <span
+              style={{
+                background: '#006400', color: '#fff',
+                fontSize: '9px', padding: '1px 5px', fontWeight: 'bold', textTransform: 'uppercase',
+              }}
+            >
+              Admin Mode
+            </span>
+          ) : (
+            <span
+              style={{
+                background: '#808080', color: '#fff',
+                fontSize: '9px', padding: '1px 5px', fontWeight: 'bold', textTransform: 'uppercase',
+              }}
+            >
+              Viewer Mode
+            </span>
+          )}
+        </div>
+        {isAdmin && (
+          <button type="button" onClick={onAddTransaction} className="win-button">
+            + Add Transaction
           </button>
-        ) : (
-          <div className="pill-shell w-fit px-3 py-1 text-xs font-medium uppercase tracking-[0.22em] text-app-secondary">
-            Viewer mode
-          </div>
         )}
       </div>
 
-      <div className="overflow-x-auto scrollbar-subtle">
-        <table className="min-w-[760px] w-full text-left">
-          <thead className="bg-table-row text-xs uppercase tracking-[0.18em] text-app-muted">
+      {/* ListView table */}
+      <div style={{ overflowX: 'auto' }}>
+        <table className="win-listview" style={{ minWidth: '700px' }}>
+          <thead>
             <tr>
-              <th className="px-4 py-4 font-medium sm:px-6">Date</th>
-              <th className="px-4 py-4 font-medium sm:px-6">Description</th>
-              <th className="px-4 py-4 font-medium sm:px-6">Category</th>
-              <th className="px-4 py-4 font-medium sm:px-6">Type</th>
-              <th className="px-4 py-4 font-medium sm:px-6">Amount</th>
-              <th className="px-4 py-4 font-medium sm:px-6">Action</th>
+              <th>Date</th>
+              <th>Description</th>
+              <th>Category</th>
+              <th>Type</th>
+              <th>Amount</th>
+              {isAdmin && <th>Action</th>}
             </tr>
           </thead>
           <tbody>
             {transactions.map((transaction) => (
-              <tr key={transaction.id} className="border-t border-app transition hover:bg-app-soft">
-                <td className="whitespace-nowrap px-4 py-4 text-sm text-app-secondary sm:px-6">
+              <tr key={transaction.id}>
+                <td style={{ whiteSpace: 'nowrap', fontFamily: 'Courier New, monospace' }}>
                   {formatDate(transaction.date)}
                 </td>
-                <td className="px-4 py-4 sm:px-6">
+                <td>
                   <div>
-                    <p className="text-sm font-medium text-app-primary">{transaction.description}</p>
-                    <p className="mt-1 text-xs text-app-muted">#{transaction.id}</p>
+                    <div style={{ fontWeight: 'bold', fontSize: '11px' }}>{transaction.description}</div>
+                    <div style={{ fontSize: '9px', color: '#808080' }}>#{transaction.id}</div>
                   </div>
                 </td>
-                <td className="px-4 py-4 text-sm text-app-secondary sm:px-6">{transaction.category}</td>
-                <td className="px-4 py-4 sm:px-6">
+                <td>{transaction.category}</td>
+                <td>
                   <span
-                    className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] ${
-                      transaction.type === 'income'
-                        ? 'bg-emerald-400/10 text-emerald-300'
-                        : 'bg-rose-400/10 text-rose-300'
-                    }`}
+                    className={transaction.type === 'income' ? 'win-badge-income' : 'win-badge-expense'}
+                    style={{ textTransform: 'uppercase', fontSize: '9px' }}
                   >
-                    {transaction.type}
+                    {transaction.type === 'income' ? '+ ' : '- '}{transaction.type}
                   </span>
                 </td>
                 <td
-                  className={`px-4 py-4 text-sm font-semibold sm:px-6 ${
-                    transaction.type === 'income' ? 'text-emerald-300' : 'text-rose-300'
-                  }`}
+                  style={{
+                    fontFamily: 'Courier New, monospace',
+                    fontWeight: 'bold',
+                    color: transaction.type === 'income' ? '#006400' : '#8b0000',
+                    whiteSpace: 'nowrap',
+                  }}
                 >
-                  {transaction.type === 'income' ? '+' : '-'}
-                  {formatCurrency(transaction.amount)}
+                  {transaction.type === 'income' ? '+' : '-'}{formatCurrency(transaction.amount)}
                 </td>
-                <td className="px-4 py-4 sm:px-6">
-                  {isAdmin ? (
+                {isAdmin && (
+                  <td>
                     <button
                       type="button"
                       onClick={() => onEditTransaction(transaction)}
-                      className="inline-flex items-center gap-2 rounded-xl border border-app bg-app-soft px-3 py-2 text-sm text-app-primary transition hover:-translate-y-0.5 hover:bg-app-strong"
+                      className="win-button"
+                      style={{ minWidth: '60px', fontSize: '10px', padding: '2px 6px' }}
                     >
-                      <PencilLine className="h-4 w-4 text-accent" />
-                      Edit
+                      Edit...
                     </button>
-                  ) : (
-                    <span className="text-sm text-app-muted">View only</span>
-                  )}
-                </td>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Status bar */}
+      <div className="win-statusbar">
+        <div className="win-statusbar-pane">
+          {transactions.length} object(s)
+        </div>
+        <div className="win-statusbar-pane" style={{ flex: 0, whiteSpace: 'nowrap' }}>
+          {isAdmin ? 'Ready' : 'Read Only'}
+        </div>
       </div>
     </div>
   )

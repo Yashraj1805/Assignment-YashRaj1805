@@ -2,7 +2,7 @@ import SummaryCard from './SummaryCard'
 
 function OverviewCards({ overview, monthlyComparison }) {
   return (
-    <div className="grid gap-4 lg:grid-cols-3">
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '6px' }}>
       <SummaryCard
         label="Total Balance"
         value={overview.totalBalance}
@@ -29,4 +29,3 @@ function OverviewCards({ overview, monthlyComparison }) {
 }
 
 export default OverviewCards
-

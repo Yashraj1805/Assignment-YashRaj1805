@@ -47,15 +47,16 @@ function FinanceDashboardPage() {
     mockTransactions,
   )
   const [selectedRole, setSelectedRole] = useLocalStorageState('finance-dashboard-role', 'viewer')
-  const [theme, setTheme] = useLocalStorageState('finance-dashboard-theme', 'dark')
+  const [theme, setTheme] = useLocalStorageState('finance-dashboard-theme', 'light')
   const [filters, setFilters] = useState(defaultFilters)
   const [sortConfig, setSortConfig] = useState(defaultSort)
   const [modalState, setModalState] = useState({ isOpen: false, mode: 'add' })
   const [formValues, setFormValues] = useState(emptyForm)
 
+  // Win2000 style — always light mode
   useEffect(() => {
-    document.documentElement.classList.toggle('dark', theme === 'dark')
-  }, [theme])
+    document.documentElement.classList.remove('dark')
+  }, [])
 
   const categories = useMemo(() => getUniqueCategories(transactions), [transactions])
 
@@ -71,18 +72,12 @@ function FinanceDashboardPage() {
   const insights = useMemo(() => getInsightCards(visibleTransactions), [visibleTransactions])
 
   const openAddModal = () => {
-    setFormValues({
-      ...emptyForm,
-      date: new Date().toISOString().slice(0, 10),
-    })
+    setFormValues({ ...emptyForm, date: new Date().toISOString().slice(0, 10) })
     setModalState({ isOpen: true, mode: 'add' })
   }
 
   const openEditModal = (transaction) => {
-    setFormValues({
-      ...transaction,
-      amount: String(transaction.amount),
-    })
+    setFormValues({ ...transaction, amount: String(transaction.amount) })
     setModalState({ isOpen: true, mode: 'edit' })
   }
 
@@ -111,10 +106,7 @@ function FinanceDashboardPage() {
       )
     } else {
       setTransactions((current) => [
-        {
-          ...normalizedTransaction,
-          id: `txn-${crypto.randomUUID().slice(0, 8)}`,
-        },
+        { ...normalizedTransaction, id: `txn-${crypto.randomUUID().slice(0, 8)}` },
         ...current,
       ])
     }
@@ -138,14 +130,20 @@ function FinanceDashboardPage() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden">
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-24 left-[-7%] h-72 w-72 rounded-full bg-accent/15 blur-3xl animate-drift" />
-        <div className="absolute right-[-6%] top-40 h-80 w-80 rounded-full bg-sky-400/15 blur-3xl animate-drift" style={{ animationDelay: '1.2s' }} />
-        <div className="absolute bottom-20 left-[30%] h-64 w-64 rounded-full bg-fuchsia-400/10 blur-3xl animate-drift" style={{ animationDelay: '2.2s' }} />
-      </div>
-
-      <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col px-4 pb-10 sm:px-6 lg:px-8">
+    /* Desktop wallpaper */
+    <div style={{ minHeight: '100vh', background: '#3a6ea5', padding: '8px' }}>
+      {/* Main application window */}
+      <div
+        className="win-window"
+        style={{
+          minHeight: 'calc(100vh - 16px)',
+          padding: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          maxWidth: '1400px',
+          margin: '0 auto',
+        }}
+      >
         <DashboardHeader
           selectedRole={selectedRole}
           onRoleChange={setSelectedRole}
@@ -155,46 +153,54 @@ function FinanceDashboardPage() {
           transactionCount={visibleTransactions.length}
         />
 
-        <main className="space-y-8 pt-5 sm:space-y-10 sm:pt-6">
-          <section className="animate-fadeUp space-y-5">
+        {/* Main content area */}
+        <main style={{ flex: 1, padding: '8px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+
+          {/* Overview cards */}
+          <section>
+            <SectionHeader
+              eyebrow="Overview"
+              title="Account Summary"
+              description="Net position, income, and expense totals for the current filter set."
+            />
             <OverviewCards overview={overview} monthlyComparison={monthlyComparison} />
           </section>
 
-          <section className="animate-fadeUp space-y-5" style={{ animationDelay: '70ms' }}>
+          {/* Charts */}
+          <section>
             <SectionHeader
-              eyebrow="Overview"
-              title="Visualize how money is moving"
-              description="The dashboard combines a monthly trend view with category-level expense composition, giving a quick read on cash health and spending concentration."
+              eyebrow="Charts"
+              title="Visualize Money Movement"
+              description="Monthly trend and category breakdown charts."
             />
-            <div className="grid gap-5 xl:grid-cols-[1.25fr_0.95fr]">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '6px' }}>
               <TrendChart data={monthlyTrendData} theme={theme} />
               <CategoryChart data={categorySpendData} theme={theme} />
             </div>
           </section>
 
-          <section className="animate-fadeUp space-y-5" style={{ animationDelay: '140ms' }}>
+          {/* Insights */}
+          <section>
             <SectionHeader
               eyebrow="Insights"
-              title="Actionable observations"
-              description="Simple derived insights help surface what matters most without needing a backend analytics engine."
+              title="Actionable Observations"
+              description="Key derived metrics and alerts from your transaction data."
             />
             <InsightsPanel insights={insights} />
           </section>
 
-          <section className="animate-fadeUp space-y-5" style={{ animationDelay: '210ms' }}>
+          {/* Transactions */}
+          <section>
             <SectionHeader
-              eyebrow="Transactions"
-              title="Searchable transaction ledger"
-              description="Search, filter, and sort through realistic finance activity. Admin mode unlocks add and edit workflows through a clean modal experience."
+              eyebrow="Ledger"
+              title="Transaction Ledger"
+              description="Search, filter, and sort your finance activity."
             />
-
             <TransactionFilters
               search={filters.search}
               onSearchChange={(value) => setFilters((current) => ({ ...current, search: value }))}
               selectedCategory={filters.selectedCategory}
-              onCategoryChange={(value) =>
-                setFilters((current) => ({ ...current, selectedCategory: value }))
-              }
+              onCategoryChange={(value) => setFilters((current) => ({ ...current, selectedCategory: value }))}
               selectedType={filters.selectedType}
               onTypeChange={(value) => setFilters((current) => ({ ...current, selectedType: value }))}
               sortKey={sortConfig.key}
@@ -208,26 +214,37 @@ function FinanceDashboardPage() {
               }
               categories={categories}
             />
-
-            <TransactionTable
-              transactions={visibleTransactions}
-              selectedRole={selectedRole}
-              onAddTransaction={openAddModal}
-              onEditTransaction={openEditModal}
-            />
+            <div style={{ marginTop: '6px' }}>
+              <TransactionTable
+                transactions={visibleTransactions}
+                selectedRole={selectedRole}
+                onAddTransaction={openAddModal}
+                onEditTransaction={openEditModal}
+              />
+            </div>
           </section>
         </main>
-      </div>
 
-      <TransactionModal
-        isOpen={modalState.isOpen && selectedRole === 'admin'}
-        mode={modalState.mode}
-        categories={categories}
-        formValues={formValues}
-        onChange={handleFormChange}
-        onClose={closeModal}
-        onSubmit={handleSubmitTransaction}
-      />
+        {/* App Taskbar */}
+        <div className="win-taskbar">
+          <button type="button" className="win-button" style={{ fontWeight: 'bold', minWidth: '80px', background: '#d4d0c8' }}>
+            <span style={{ marginRight: '4px' }}>&#127987;</span>
+            Start
+          </button>
+          <div style={{ width: '1px', background: '#808080', height: '22px', margin: '0 2px' }} />
+          <div
+            className="win-button"
+            style={{ minWidth: '120px', justifyContent: 'flex-start', fontSize: '11px', background: '#bbb8b0', borderTopColor: '#808080', borderLeftColor: '#808080', borderRightColor: '#fff', borderBottomColor: '#fff' }}
+          >
+            <span style={{ marginRight: '4px' }}>$</span>
+            PulseFi Dashboard
+          </div>
+          <div style={{ flex: 1 }} />
+          <div className="win-inset" style={{ padding: '2px 8px', fontSize: '11px', fontFamily: 'Courier New, monospace' }}>
+            {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

@@ -1,5 +1,3 @@
-import { X } from 'lucide-react'
-
 const initialFormState = {
   date: '',
   description: '',
@@ -10,10 +8,10 @@ const initialFormState = {
 
 function Field({ label, children }) {
   return (
-    <label className="flex flex-col gap-2 text-sm text-app-secondary">
-      {label}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', fontSize: '11px' }}>
+      <label style={{ color: '#000', fontWeight: 'bold', fontSize: '11px' }}>{label}:</label>
       {children}
-    </label>
+    </div>
   )
 }
 
@@ -29,105 +27,140 @@ function TransactionModal({
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 p-4 backdrop-blur-md">
-      <div className="panel-grid w-full max-w-2xl border p-6 shadow-glow sm:p-7">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent/80">Admin editor</p>
-            <h3 className="mt-2 text-2xl font-semibold text-app-primary">
-              {mode === 'edit' ? 'Edit transaction' : 'Add transaction'}
-            </h3>
-            <p className="mt-2 text-sm leading-6 text-app-secondary">
-              Admin mode can create and update transactions. Viewer mode is intentionally read-only.
-            </p>
-          </div>
+    /* Overlay — matches classic modal dimming */
+    <div
+      style={{
+        position: 'fixed', inset: 0, zIndex: 50,
+        background: 'rgba(0,0,0,0.5)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: '16px',
+      }}
+    >
+      {/* Dialog window */}
+      <div
+        className="win-window"
+        style={{ width: '100%', maxWidth: '440px', padding: 0 }}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+      >
+        {/* Title bar */}
+        <div className="win-titlebar">
+          <span style={{ fontSize: '11px' }}>&#128203;</span>
+          <span id="modal-title">
+            {mode === 'edit' ? 'Edit Transaction' : 'Add New Transaction'}
+          </span>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-2xl border border-app bg-app-soft p-3 text-app-secondary transition hover:bg-app-strong hover:text-app-primary"
+            className="win-button ml-auto"
+            style={{ minWidth: '16px', minHeight: '14px', padding: '0 4px', fontSize: '10px', lineHeight: 1, fontWeight: 'bold', color: '#8b0000' }}
+            aria-label="Close"
           >
-            <X className="h-5 w-5" />
+            &#10005;
           </button>
         </div>
 
-        <form
-          className="mt-6 grid gap-4 sm:grid-cols-2"
-          onSubmit={(event) => {
-            event.preventDefault()
-            onSubmit()
-          }}
-        >
-          <Field label="Date">
-            <input
-              type="date"
-              value={formValues.date || initialFormState.date}
-              onChange={(event) => onChange('date', event.target.value)}
-              className="input-shell"
-              required
-            />
-          </Field>
-          <Field label="Amount">
-            <input
-              type="number"
-              min="0"
-              step="0.01"
-              value={formValues.amount || initialFormState.amount}
-              onChange={(event) => onChange('amount', event.target.value)}
-              placeholder="0.00"
-              className="input-shell"
-              required
-            />
-          </Field>
-          <div className="sm:col-span-2">
-            <Field label="Description">
+        {/* Dialog body */}
+        <div style={{ padding: '12px' }}>
+          <p style={{ fontSize: '11px', color: '#444', margin: '0 0 10px', borderBottom: '1px solid #bbb', paddingBottom: '6px' }}>
+            {mode === 'edit'
+              ? 'Modify the transaction details below, then click Save.'
+              : 'Fill in the details below to add a new transaction to the ledger.'}
+          </p>
+
+          <form
+            style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}
+            onSubmit={(event) => {
+              event.preventDefault()
+              onSubmit()
+            }}
+          >
+            <Field label="Date">
               <input
-                type="text"
-                value={formValues.description || initialFormState.description}
-                onChange={(event) => onChange('description', event.target.value)}
-                placeholder="e.g. Salary deposit or travel booking"
-                className="input-shell w-full"
+                type="date"
+                value={formValues.date || initialFormState.date}
+                onChange={(event) => onChange('date', event.target.value)}
+                className="win-input"
+                style={{ width: '100%' }}
                 required
               />
             </Field>
-          </div>
-          <Field label="Category">
-            <input
-              list="transaction-categories"
-              value={formValues.category || initialFormState.category}
-              onChange={(event) => onChange('category', event.target.value)}
-              placeholder="Select or type a category"
-              className="input-shell"
-              required
-            />
-            <datalist id="transaction-categories">
-              {categories.map((category) => (
-                <option key={category} value={category} />
-              ))}
-            </datalist>
-          </Field>
-          <Field label="Type">
-            <select value={formValues.type || initialFormState.type} onChange={(event) => onChange('type', event.target.value)} className="input-shell">
-              <option value="income">Income</option>
-              <option value="expense">Expense</option>
-            </select>
-          </Field>
+            <Field label="Amount ($)">
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                value={formValues.amount || initialFormState.amount}
+                onChange={(event) => onChange('amount', event.target.value)}
+                placeholder="0.00"
+                className="win-input"
+                style={{ width: '100%', fontFamily: 'Courier New, monospace' }}
+                required
+              />
+            </Field>
+            <div style={{ gridColumn: '1 / -1' }}>
+              <Field label="Description">
+                <input
+                  type="text"
+                  value={formValues.description || initialFormState.description}
+                  onChange={(event) => onChange('description', event.target.value)}
+                  placeholder="e.g. Salary deposit or travel booking"
+                  className="win-input"
+                  style={{ width: '100%' }}
+                  required
+                />
+              </Field>
+            </div>
+            <Field label="Category">
+              <input
+                list="transaction-categories"
+                value={formValues.category || initialFormState.category}
+                onChange={(event) => onChange('category', event.target.value)}
+                placeholder="Select or type..."
+                className="win-input"
+                style={{ width: '100%' }}
+                required
+              />
+              <datalist id="transaction-categories">
+                {categories.map((category) => (
+                  <option key={category} value={category} />
+                ))}
+              </datalist>
+            </Field>
+            <Field label="Type">
+              <select
+                value={formValues.type || initialFormState.type}
+                onChange={(event) => onChange('type', event.target.value)}
+                className="win-select"
+                style={{ width: '100%' }}
+              >
+                <option value="income">Income</option>
+                <option value="expense">Expense</option>
+              </select>
+            </Field>
 
-          <div className="mt-2 flex flex-col-reverse gap-3 sm:col-span-2 sm:flex-row sm:justify-end">
-            <button
-              type="button"
-              onClick={onClose}
-              className="rounded-2xl border border-app bg-app-soft px-5 py-3 text-sm font-medium text-app-secondary transition hover:bg-app-strong"
+            {/* Button row — classic dialog OK/Cancel */}
+            <div
+              style={{
+                gridColumn: '1 / -1',
+                borderTop: '1px solid #bbb',
+                paddingTop: '10px',
+                marginTop: '2px',
+                display: 'flex',
+                justifyContent: 'flex-end',
+                gap: '6px',
+              }}
             >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="rounded-2xl bg-gradient-to-r from-accent to-sky-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:-translate-y-0.5 hover:shadow-lg hover:shadow-accent/25"
-            >
-              {mode === 'edit' ? 'Save changes' : 'Create transaction'}
-            </button>
-          </div>
-        </form>
+              <button type="submit" className="win-button win-button-primary" style={{ fontWeight: 'bold' }}>
+                {mode === 'edit' ? 'Save' : 'OK'}
+              </button>
+              <button type="button" onClick={onClose} className="win-button">
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   )
