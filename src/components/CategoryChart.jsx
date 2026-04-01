@@ -1,66 +1,82 @@
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
 import { formatCompactCurrency } from '../utils/formatters'
 
-const colors = ['#5EEAD4', '#60A5FA', '#FBBF24', '#FB7185', '#C084FC', '#34D399', '#F97316']
+const colors = ['#0a246a', '#006400', '#8b0000', '#8b6914', '#4b0082', '#006666', '#804000']
 
-function CategoryChart({ data, theme }) {
-  const tooltipBackground = theme === 'dark' ? 'rgba(7, 17, 31, 0.96)' : 'rgba(255, 255, 255, 0.96)'
-  const tooltipBorder = theme === 'dark' ? '1px solid rgba(148, 163, 184, 0.15)' : '1px solid rgba(148, 163, 184, 0.22)'
-
+function CategoryChart({ data }) {
   if (!data.length) {
     return (
-      <div className="glass-panel flex h-[300px] items-center justify-center border border-dashed border-app bg-app-soft text-sm text-app-muted">
+      <div className="win-window" style={{ padding: '16px', textAlign: 'center', color: '#808080', fontSize: '11px' }}>
         No category data available for the current filters.
       </div>
     )
   }
 
   return (
-    <div className="panel-grid shine-card card-hover p-5 sm:p-6">
-      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <h3 className="text-lg font-semibold text-app-primary">Expense mix by category</h3>
-          <p className="mt-2 text-sm text-app-secondary">
-            A category-based visualization of where money is leaving the business and lifestyle stack.
-          </p>
-        </div>
-        <div className="pill-shell px-3 py-1 text-xs font-medium text-app-secondary">
-          Category-based visualization
-        </div>
+    <div className="win-window" style={{ padding: 0 }}>
+      <div
+        style={{
+          background: 'linear-gradient(to right, #d4d0c8, #e8e4dc)',
+          borderBottom: '1px solid #808080',
+          padding: '3px 6px',
+        }}
+      >
+        <span style={{ fontSize: '11px', fontWeight: 'bold' }}>Expense Mix by Category</span>
       </div>
-      <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
-        <div className="h-[250px] sm:h-[260px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie data={data} dataKey="amount" nameKey="category" innerRadius={62} outerRadius={96} paddingAngle={4}>
-                {data.map((entry, index) => (
-                  <Cell key={entry.category} fill={colors[index % colors.length]} />
-                ))}
-              </Pie>
-              <Tooltip
-                formatter={(value) => formatCompactCurrency(value)}
-                contentStyle={{
-                  background: tooltipBackground,
-                  border: tooltipBorder,
-                  borderRadius: '16px',
-                }}
-              />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-        <div className="space-y-3">
-          {data.slice(0, 6).map((item, index) => (
-            <div
-              key={item.category}
-              className="flex items-center justify-between rounded-2xl border border-app bg-app-soft px-4 py-3 transition hover:-translate-y-0.5 hover:bg-app-strong"
-            >
-              <div className="flex items-center gap-3">
-                <span className="h-3 w-3 rounded-full" style={{ backgroundColor: colors[index % colors.length] }} />
-                <span className="text-sm font-medium text-app-primary">{item.category}</span>
+      <div style={{ padding: '8px' }}>
+        <p style={{ fontSize: '10px', color: '#444', margin: '0 0 8px' }}>
+          Category-based breakdown of where money is going.
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', alignItems: 'center' }}>
+          <div style={{ height: '200px' }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie data={data} dataKey="amount" nameKey="category" innerRadius={40} outerRadius={75} paddingAngle={2}>
+                  {data.map((entry, index) => (
+                    <Cell key={entry.category} fill={colors[index % colors.length]} stroke="#d4d0c8" strokeWidth={1} />
+                  ))}
+                </Pie>
+                <Tooltip
+                  formatter={(value) => formatCompactCurrency(value)}
+                  contentStyle={{
+                    background: '#d4d0c8',
+                    border: '2px solid',
+                    borderTopColor: '#fff',
+                    borderLeftColor: '#fff',
+                    borderRightColor: '#404040',
+                    borderBottomColor: '#404040',
+                    borderRadius: 0,
+                    fontSize: '11px',
+                    fontFamily: 'Tahoma, Arial',
+                  }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', maxHeight: '200px', overflowY: 'auto' }}>
+            {data.slice(0, 7).map((item, index) => (
+              <div
+                key={item.category}
+                className="win-inset"
+                style={{ padding: '2px 6px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px' }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <span
+                    style={{
+                      width: '10px', height: '10px', flexShrink: 0,
+                      background: colors[index % colors.length],
+                      border: '1px solid #404040',
+                      display: 'inline-block',
+                    }}
+                  />
+                  <span style={{ fontSize: '10px', color: '#000' }}>{item.category}</span>
+                </div>
+                <span style={{ fontSize: '10px', color: '#000', fontFamily: 'Courier New, monospace', whiteSpace: 'nowrap' }}>
+                  {formatCompactCurrency(item.amount)}
+                </span>
               </div>
-              <span className="text-sm text-app-secondary">{formatCompactCurrency(item.amount)}</span>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </div>

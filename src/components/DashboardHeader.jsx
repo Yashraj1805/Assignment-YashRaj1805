@@ -1,22 +1,4 @@
-import clsx from 'clsx'
-import { Download, Moon, Sparkles, SunMedium } from 'lucide-react'
 import RoleSwitcher from './RoleSwitcher'
-
-function QuickChip({ label, value, tone = 'default' }) {
-  return (
-    <div
-      className={clsx(
-        'rounded-2xl border px-3 py-2 backdrop-blur-sm',
-        tone === 'accent'
-          ? 'border-accent/25 bg-accent/10 text-accent'
-          : 'border-app bg-app-soft text-app-secondary',
-      )}
-    >
-      <p className="text-[11px] uppercase tracking-[0.22em] opacity-70">{label}</p>
-      <p className="mt-1 text-sm font-semibold text-app-primary">{value}</p>
-    </div>
-  )
-}
 
 function DashboardHeader({
   selectedRole,
@@ -29,73 +11,140 @@ function DashboardHeader({
   const isDark = theme === 'dark'
 
   return (
-    <header className="sticky top-0 z-20 -mx-4 px-4 pt-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-      <div className="hero-shell mx-auto max-w-7xl border px-4 py-4 sm:px-5 sm:py-5 lg:px-6 lg:py-6">
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
-        <div className="absolute -left-10 top-8 h-28 w-28 rounded-full bg-accent/20 blur-3xl animate-drift" />
-        <div className="absolute -right-8 bottom-4 h-24 w-24 rounded-full bg-sky-400/15 blur-3xl animate-drift" />
+    <header className="sticky top-0 z-20">
+      {/* Title bar */}
+      <div className="win-titlebar">
+        <img
+          src="https://win98icons.alexmeub.com/icons/png/money_dollar-0.png"
+          alt=""
+          className="h-4 w-4"
+          style={{ imageRendering: 'pixelated' }}
+          onError={(e) => { e.currentTarget.style.display = 'none' }}
+        />
+        <span>PulseFi - Financial Dashboard</span>
+        <div className="ml-auto flex gap-1">
+          <button
+            type="button"
+            className="win-button"
+            style={{ minWidth: '16px', minHeight: '14px', padding: '0 2px', fontSize: '10px', lineHeight: 1 }}
+            aria-label="Minimize"
+          >
+            _
+          </button>
+          <button
+            type="button"
+            className="win-button"
+            style={{ minWidth: '16px', minHeight: '14px', padding: '0 2px', fontSize: '10px', lineHeight: 1 }}
+            aria-label="Maximize"
+          >
+            &#9633;
+          </button>
+          <button
+            type="button"
+            className="win-button"
+            style={{ minWidth: '16px', minHeight: '14px', padding: '0 2px', fontSize: '10px', lineHeight: 1, fontWeight: 'bold', color: '#8b0000' }}
+            aria-label="Close"
+          >
+            &#10005;
+          </button>
+        </div>
+      </div>
 
-        <div className="relative grid gap-5 xl:grid-cols-[minmax(0,1.3fr)_380px] xl:items-start">
-          <div className="space-y-4">
-            <div className="inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/10 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.28em] text-accent">
-              <Sparkles className="h-3.5 w-3.5 animate-pulseSoft" />
-              Finance intelligence workspace
+      {/* Menu bar */}
+      <div
+        className="win-window"
+        style={{ borderTop: 'none', borderRadius: 0, padding: '2px 4px', display: 'flex', alignItems: 'center', gap: '0', borderBottom: '1px solid #808080' }}
+      >
+        {['File', 'Edit', 'View', 'Tools', 'Help'].map((menu) => (
+          <button
+            key={menu}
+            type="button"
+            className="px-2 py-0.5 text-xs hover:bg-[#0a246a] hover:text-white"
+            style={{ fontSize: '11px', background: 'transparent', border: 'none', cursor: 'pointer', fontFamily: 'Tahoma, Arial, sans-serif' }}
+          >
+            <span style={{ textDecoration: 'underline' }}>{menu[0]}</span>{menu.slice(1)}
+          </button>
+        ))}
+      </div>
+
+      {/* Main header content */}
+      <div className="win-window" style={{ borderTop: 'none', borderRadius: 0, padding: '8px' }}>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+
+          {/* Left: App info panel */}
+          <div className="win-card" style={{ flex: '1 1 320px', minWidth: 0 }}>
+            <div style={{ borderBottom: '1px solid #808080', marginBottom: '6px', paddingBottom: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <div
+                style={{
+                  width: '32px', height: '32px', background: 'linear-gradient(135deg, #0a246a, #1e90ff)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                  borderTop: '1px solid #fff', borderLeft: '1px solid #fff', borderRight: '1px solid #404040', borderBottom: '1px solid #404040'
+                }}
+              >
+                <span style={{ color: '#fff', fontSize: '16px', fontWeight: 'bold' }}>$</span>
+              </div>
+              <div>
+                <p style={{ fontSize: '14px', fontWeight: 'bold', margin: 0, color: '#000' }}>PulseFi Dashboard</p>
+                <p style={{ fontSize: '10px', margin: 0, color: '#444' }}>Financial Intelligence Workspace v1.0</p>
+              </div>
             </div>
-
-            <div className="space-y-3">
-              <h1 className="max-w-4xl text-balance text-[clamp(2.1rem,5vw,4.4rem)] font-semibold leading-[0.95] tracking-tight text-app-primary">
-                PulseFi gives your finance story a sharper, faster interface.
-              </h1>
-              <p className="max-w-2xl text-sm leading-6 text-app-secondary sm:text-base">
-                Review cash flow, compare spending patterns, and manage transactions from a tighter,
-                recruiter-friendly dashboard that feels premium on mobile and desktop.
-              </p>
-            </div>
-
-            <div className="grid gap-3 sm:grid-cols-3">
-              <QuickChip label="Theme" value={isDark ? 'Dark mode' : 'Light mode'} tone="accent" />
-              <QuickChip label="Records" value={`${transactionCount} transactions`} />
-              <QuickChip label="Access" value={selectedRole === 'admin' ? 'Admin controls' : 'Viewer only'} />
+            <p style={{ fontSize: '11px', color: '#444', margin: '0 0 6px', lineHeight: '1.4' }}>
+              Review cash flow, compare spending patterns, and manage transactions from your personal finance dashboard.
+            </p>
+            <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+              <div className="win-inset" style={{ padding: '2px 6px' }}>
+                <span style={{ fontSize: '10px', color: '#444' }}>Records: </span>
+                <span style={{ fontSize: '10px', fontWeight: 'bold' }}>{transactionCount}</span>
+              </div>
+              <div className="win-inset" style={{ padding: '2px 6px' }}>
+                <span style={{ fontSize: '10px', color: '#444' }}>Mode: </span>
+                <span style={{ fontSize: '10px', fontWeight: 'bold' }}>{isDark ? 'Dark' : 'Light'}</span>
+              </div>
+              <div className="win-inset" style={{ padding: '2px 6px' }}>
+                <span style={{ fontSize: '10px', color: '#444' }}>Access: </span>
+                <span style={{ fontSize: '10px', fontWeight: 'bold', color: selectedRole === 'admin' ? '#006400' : '#444' }}>
+                  {selectedRole === 'admin' ? 'Admin' : 'Viewer'}
+                </span>
+              </div>
             </div>
           </div>
 
-          <div className="panel-grid shine-card card-hover flex flex-col gap-4 p-4 sm:p-5">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <p className="text-sm font-semibold text-app-primary">Workspace controls</p>
-                <p className="mt-1 text-sm text-app-secondary">Theme, export, and role access in one compact panel.</p>
-              </div>
+          {/* Right: Controls panel */}
+          <div className="win-card" style={{ flex: '0 0 280px', minWidth: 0 }}>
+            <div style={{ borderBottom: '1px solid #808080', marginBottom: '6px', paddingBottom: '2px' }}>
+              <p style={{ fontSize: '11px', fontWeight: 'bold', margin: 0 }}>Workspace Controls</p>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
               <button
                 type="button"
                 onClick={onToggleTheme}
-                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-app bg-app-soft px-4 py-3 text-sm font-medium text-app-primary transition hover:-translate-y-0.5 hover:bg-app-strong"
+                className="win-button"
+                style={{ justifyContent: 'flex-start', minWidth: 0, width: '100%' }}
               >
-                {isDark ? <SunMedium className="h-4 w-4 text-amber-400" /> : <Moon className="h-4 w-4 text-sky-500" />}
-                {isDark ? 'Switch to light' : 'Switch to dark'}
+                <span style={{ fontSize: '12px', marginRight: '2px' }}>{isDark ? '☀' : '🌙'}</span>
+                {isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
               </button>
-            </div>
-
-            <button
-              type="button"
-              onClick={onExport}
-              className="inline-flex items-center justify-center gap-2 rounded-2xl border border-app bg-app-soft px-4 py-3 text-sm font-medium text-app-primary transition hover:-translate-y-0.5 hover:bg-app-strong"
-            >
-              <Download className="h-4 w-4" />
-              Export CSV
-            </button>
-
-            <div className="space-y-3 rounded-[22px] border border-app bg-app-soft p-3 sm:p-4">
+              <button
+                type="button"
+                onClick={onExport}
+                className="win-button"
+                style={{ justifyContent: 'flex-start', minWidth: 0, width: '100%' }}
+              >
+                <span style={{ fontSize: '12px', marginRight: '2px' }}>&#128190;</span>
+                Export to CSV...
+              </button>
               <div>
-                <p className="text-sm font-semibold text-app-primary">Role-based access</p>
-                <p className="mt-1 text-sm text-app-secondary">
-                  Viewer stays read-only. Admin unlocks add and edit controls.
-                </p>
+                <p style={{ fontSize: '10px', color: '#444', margin: '0 0 4px' }}>Role-Based Access Control:</p>
+                <RoleSwitcher selectedRole={selectedRole} onRoleChange={onRoleChange} />
               </div>
-              <RoleSwitcher selectedRole={selectedRole} onRoleChange={onRoleChange} />
             </div>
           </div>
+
         </div>
       </div>
+
+      {/* Toolbar separator */}
+      <div style={{ height: '2px', background: 'linear-gradient(to right, #808080, #fff, #808080)' }} />
     </header>
   )
 }

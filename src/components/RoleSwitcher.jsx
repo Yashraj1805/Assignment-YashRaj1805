@@ -1,5 +1,3 @@
-import clsx from 'clsx'
-
 const roles = [
   { id: 'viewer', label: 'Viewer', detail: 'Read-only access' },
   { id: 'admin', label: 'Admin', detail: 'Add and edit transactions' },
@@ -7,26 +5,35 @@ const roles = [
 
 function RoleSwitcher({ selectedRole, onRoleChange }) {
   return (
-    <div className="grid grid-cols-2 gap-2 rounded-[24px] border border-app bg-app-soft p-2">
+    <div className="win-inset" style={{ padding: '4px', display: 'flex', gap: '4px' }}>
       {roles.map((role) => {
         const isActive = role.id === selectedRole
-
         return (
           <button
             key={role.id}
             type="button"
             onClick={() => onRoleChange(role.id)}
-            className={clsx(
-              'rounded-[20px] px-4 py-3 text-left transition duration-300',
-              isActive
-                ? 'bg-gradient-to-r from-accent to-sky-400 text-slate-950 shadow-lg shadow-accent/20'
-                : 'text-app-secondary hover:-translate-y-0.5 hover:bg-app-strong',
-            )}
+            className={isActive ? undefined : 'win-button'}
+            style={{
+              flex: 1,
+              padding: '4px 6px',
+              fontSize: '11px',
+              textAlign: 'left',
+              cursor: 'pointer',
+              fontFamily: 'Tahoma, Arial, sans-serif',
+              ...(isActive
+                ? {
+                    background: '#0a246a',
+                    color: '#fff',
+                    border: '1px solid #000',
+                    borderTop: '1px solid #000',
+                    borderLeft: '1px solid #000',
+                  }
+                : {}),
+            }}
           >
-            <span className="block text-sm font-semibold">{role.label}</span>
-            <span className={clsx('mt-1 block text-xs', isActive ? 'text-slate-900/80' : 'text-app-muted')}>
-              {role.detail}
-            </span>
+            <div style={{ fontWeight: 'bold' }}>{role.label}</div>
+            <div style={{ fontSize: '9px', color: isActive ? '#cce' : '#666', marginTop: '1px' }}>{role.detail}</div>
           </button>
         )
       })}
